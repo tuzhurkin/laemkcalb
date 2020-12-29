@@ -1,0 +1,633 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Passion+One:wght@900&display=swap');
+
+$bg: #282828;
+$black: #1d1d1d;
+$white: #fcfcfc;
+$gray: #949494;
+$yellow: #ffbe33;
+
+$minWidth: 320px;
+$minHeight: 568px;
+
+// mixin для адаптивного изменения шрифтов и отступов
+$maxWidth: 1280;
+@mixin adaptiv-prop($property, $pcSize, $mobSize) {
+    $addSize: $pcSize - $mobSize;
+    $addMobSize: $addSize + $addSize * 0.7;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addMobSize} * ((100vw - 320px) / #{$maxWidth}) );
+    }
+    @media screen and (min-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addSize} * (100vw / #{$maxWidth}) );
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    background-color: $bg;
+    color: $white;
+    
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+a {
+    text-decoration: none;
+}
+
+//        <!-- L O G O + B U R G E R -->      //
+
+.logo-button {
+    position: absolute;
+    top: 40px;
+    left: 5%;
+
+    width: 50px;
+    height: 50px;
+    z-index: 5;
+}
+
+.burger {
+    position: absolute;
+    top: 47.5px;
+    right: 5%;
+
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 5;
+
+    &__line {
+        
+        background-color: $white;
+
+        width: 25px;
+        height: 5px;
+        margin: 5px;
+                                                    
+        &_up {
+            transition: transform 0.3s ease-in-out 0s;
+        }
+
+        &_mid {
+            transition: transform 0.2s ease-in-out 0s, opacity 0.2s ease-in-out 0s;
+        }
+
+        &_down {
+            transition: transform 0.3s ease-in-out 0s;
+        }
+
+    }
+
+    &__color {                              // отдельный div для transition: color из-за конкуренции с transition: transform into cross
+        background-color: $white;
+        
+        width: 100%;
+        height: 100%;
+    }
+
+}
+
+.burger.cross-transform .burger__line {         // transforms the burger into the cross and back via JS
+    &_up {
+        transform: translateY(10px) rotate(45deg) ;
+    }
+    &_mid {
+        transform: translateX(-25px);
+        opacity: 0;
+    } 
+    &_down {
+        transform: translateY(-10px) rotate(-45deg) ;
+    }
+}
+
+//        <!-- L O G O ___ B U R G E R -->      //
+
+//        <!-- S I D E N A V M E N U -->      //
+
+.nav-container {
+    background-color: $yellow;
+    font-family: 'Passion One', sans-serif;
+
+    position: absolute;                  // добавляет ~ "height: 100vh;"
+    width: 0%;
+    height: 100%;
+    min-height: $minHeight;
+    top: 0;
+    right: 0;
+    margin: 0;
+    z-index: 4;
+
+    overflow: hidden;
+
+    transition: 0.5s ease-in-out;
+}
+
+.navigation {
+    // background-color: $gray;
+    
+    width: 100%;
+    height: 80%;
+    margin: 0;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    list-style: none;
+    padding-inline-start: 0;
+
+    &__link {
+        // background-color: $gray;
+        text-decoration: none;
+
+        width: 100%;                   
+        height: 8vw;
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            height: 12vw;
+        }
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+
+        margin-top: 1vw;
+        overflow: hidden;
+
+    }
+
+}
+
+.outer {
+
+    transition: 0.2s ease-in-out;
+    &:first-child {
+        margin-left: 2em;
+    }
+    &:last-child {
+        margin-right: 2em;
+    }
+}
+
+.letter {
+    color: $black;
+    font-size: 10vw;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        font-size: 15vw;
+    }
+
+    font-weight: 900;
+    line-height: 0.9;
+
+    display: inline-block;              // чтобы работал transform
+    
+    transform: translateY(80%);
+
+    transition: 0.25s ease-in-out;
+}
+
+.letter:before {
+    content: attr(data-letter);
+    color: $white;
+    
+    position: absolute;
+    top: 80%;
+}
+
+.reveal {
+    transform: translateY(80%);
+    transition-timing-function: ease-in-out;
+}
+
+
+//        F O L L O W _ U S        //
+
+.socials-sidebar {
+    // background-color: $gray;
+
+    width: 100%;
+    height: 20%;
+    margin: 0;
+
+    padding-inline-start: 0;
+    list-style: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__item {          // .socials-sidebar__item is used for opacity animation when sidebar opens
+        opacity: 0;
+    }
+
+    &__link {
+        color: $black;
+        border: 1px solid $black;
+        border-radius: 50%;
+
+        @include adaptiv-prop(font-size, 16, 12);
+        @include adaptiv-prop(margin, 10, 5);
+
+        display: inline-block;
+
+        @include adaptiv-prop(width, 50, 40);
+        @include adaptiv-prop(height, 50, 40);
+        @include adaptiv-prop(line-height, 50, 40);
+        text-align: center;
+        vertical-align: middle;
+        text-decoration: none;
+
+        transition: color 0.25s, border 0.25s;
+
+        &:hover {
+            color: $white;
+            border: 1px solid $white;
+        }
+    }
+    
+}
+
+// <!-- / ___ S I D E N A V M E N U ___ / --> //
+
+
+.video-container {
+    max-width: 90%;
+    height: auto;
+    // margin: 5% auto;
+    margin: 130px auto 0;
+
+
+    display: flex;
+    justify-content: center;
+}
+
+.project-title {
+    width: 60%;
+    margin: 5% auto 0;
+
+    @media screen and (min-width: 767px) and (max-width: 1024px) {
+        width: 75%;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 90%;
+    }
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    &__main {
+        @include adaptiv-prop(font-size, 60, 24);
+        font-weight: 900;
+
+        margin: 0;
+    }
+    &__sub {
+        @include adaptiv-prop(font-size, 24, 18);
+        font-weight: 400;
+
+        margin: 0;
+    }
+}
+
+.project-body {
+    width: 100%;
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.project-description-wrapper {
+    width: 60%;
+    margin: 5% auto;
+
+    @media screen and (min-width: 767px) and (max-width: 1024px) {
+        width: 75%;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 90%;
+    }
+
+    display: flex;
+    justify-content: flex-end;
+}
+
+.project-description {
+    width: 70%;
+
+    @media screen and (min-width: 767px) and (max-width: 1024px) {
+        width: 85%;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 100%;
+    }
+
+    &__text {
+        @include adaptiv-prop(font-size, 20, 16);
+        @include adaptiv-prop(line-height, 24, 18);
+        letter-spacing: -0.5px;
+    }
+}
+
+.project-gallery {
+    width: 100%;
+    margin: 5% auto;
+
+    @media screen and (min-width: 1280px) {
+        width: 990px;                       // 990 = 3 * 320 + 3 * 10 = width and margin-right-left of 3 pics
+    }
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    @media screen and (min-width: 320px) and (max-width: 1024px) {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    &__img-wrapper {
+        width: 320px;           // const width of pic
+        height: 180px;          // const height of pic
+        margin: 5px;
+
+        @media screen and (min-width: 320px) and (max-width: 1024px) {      // makes pic 90% width of the screen
+            @include adaptiv-prop(width, 922, 288);             // 1024 * 90%, 320 * 90%
+            @include adaptiv-prop(height, 518, 162);             // 576 * 90%, 180 * 90%
+        }
+    }
+
+    &__img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.project-credits {
+    width: 90%;
+    margin: 5% auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &__title {
+        @include adaptiv-prop(font-size, 48, 24);
+        font-weight: 900;
+        text-align: center;
+
+        margin-bottom: 2%;
+    }
+
+    &__list {
+        width: 60%;
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            width: 100%;
+        }
+    }
+
+    &__item {
+        width: 100%;
+        margin: 1% auto;
+        display: flex;
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            flex-direction: column;
+        }
+    }
+
+    &__term {
+        @include adaptiv-prop(font-size, 20, 16);
+        @include adaptiv-prop(line-height, 24, 18);
+        font-weight: 900;
+        text-align: right;
+
+        display: block;
+        width: 50%;
+        margin: 0;
+        padding-right: 10px;
+
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            width: 100%;
+            text-align: left;
+            margin-top: 1%;
+        }
+    }
+
+    &__description {
+        @include adaptiv-prop(font-size, 20, 16);
+        @include adaptiv-prop(line-height, 24, 18);
+        letter-spacing: -0.5px;
+        text-align: left;
+
+        display: block;
+        width: 50%;
+        margin: 0;
+        padding-left: 10px;
+
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            width: 100%;
+            text-align: left;
+        }
+    }
+}
+
+////////////////////// FOOTER ///////////////////////
+
+// mixin для адаптивного изменения шрифтов и отступов в футере
+$maxWidth: 1280;
+@mixin adaptiv-footer($property, $pcSize, $mobSize) {
+    $addSize: $pcSize - $mobSize;
+    $addMobSize: $addSize + $addSize * 0.7;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addMobSize} * ((100vw - 320px) / #{$maxWidth}) );
+    }
+    @media screen and (min-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addSize} * (100vw / #{$maxWidth}) );
+    }
+}
+
+.footer {
+    background-color: $black;
+    color: $white;
+    font-weight: 300;
+    @include adaptiv-footer(font-size, 20, 14);
+
+    width: 100%;
+    margin: 5% auto;
+    margin-bottom: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__title {
+        @include adaptiv-footer(font-size, 64, 36);
+        font-weight: 900;
+        letter-spacing: -1px;
+    }
+
+}
+
+.contact {
+    width: 100%;
+    margin: 5% auto;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (max-width: 767px) {
+        flex-direction: column;
+    }
+
+}   
+
+.office {
+    width: 30%;
+
+    @media screen and (max-width: 1024px) {
+        width: 40%;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 80%;
+    }
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__city {
+        font-weight: 900;
+        margin: 5px auto;
+    }
+
+    &__info {
+        margin: 5px auto;
+    }
+}
+
+.office + .office {
+    @media screen and (min-width: 767px) {
+        border-left: 1px solid $white;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        @include adaptiv-footer(margin-top, 75, 25);
+    }
+}
+
+.office:last-child {
+    @media screen and (min-width: 767px) and (max-width: 1024px) {
+        border: none;
+        margin-top: 50px;
+    }
+}
+
+.address {
+    color: $white;
+    text-decoration: none;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.mail-jobs {
+    width: 100%;
+    margin: 5% auto;                    
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (max-width: 767px) {
+        flex-direction: column;
+    }
+    
+}
+
+.slot {
+    width: 25%;
+    margin: 0 5%;
+
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 80%;
+    }
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__title {
+        font-weight: 900;
+        margin: 5px auto;
+    }
+    &__info {
+        color: $white;
+        margin: 5px auto;
+    }
+}
+
+.slot + .slot {
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        @include adaptiv-footer(margin-top, 50, 25);
+    }
+}
+
+.socials {
+    width: 100%;
+
+    padding-inline-start: 0;
+    list-style: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__link {
+        color: $white;
+        border: 1px solid $white;
+        border-radius: 50%;
+        @include adaptiv-footer(font-size, 16, 12);
+        @include adaptiv-footer(margin, 10, 5);
+
+        display: inline-block;
+        @include adaptiv-footer(width, 50, 40);
+        @include adaptiv-footer(height, 50, 40);
+        @include adaptiv-footer(line-height, 50, 40);
+        text-align: center;
+        vertical-align: middle;
+        text-decoration: none;
+    }
+}
+
+.copyright {
+    display: flex;
+    justify-content: space-between;
+
+    border-top: 1px solid $white;
+    padding: 10px 0;
+    width: 90%;
+    margin-top: 5%;
+
+    &__info {
+        color: $white;
+        font-size: 0.7em;
+    }
+}
+

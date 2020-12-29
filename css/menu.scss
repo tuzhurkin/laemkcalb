@@ -1,0 +1,431 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Passion+One:wght@900&display=swap');
+
+$bg: #282828;
+$black: #1d1d1d;
+$white: #fcfcfc;
+$gray: #949494;         // rgb(148, 148, 148);
+$yellow: #ffbe33;
+
+$minWidth: 320px;
+$minHeight: 568px;
+
+// mixin для адаптивного изменения шрифтов и отступов
+$maxWidth: 1280;
+@mixin adaptiv-prop($property, $pcSize, $mobSize) {
+    $addSize: $pcSize - $mobSize;
+    $addMobSize: $addSize + $addSize * 0.7;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addMobSize} * ((100vw - 320px) / #{$maxWidth}) );
+    }
+    @media screen and (min-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addSize} * (100vw / #{$maxWidth}) );
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    background-color: $bg;
+    color: $white;
+
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+//        <!-- L O G O + B U R G E R -->      //
+.logo-button {
+    position: absolute;
+    top: 40px;
+    left: 5%;               // 50px;
+
+    width: 50px;
+    height: 50px;
+    z-index: 5;
+}
+
+.burger {
+    position: absolute;
+    top: 47.5px;
+    right: 5%;              // 50px;
+
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 5;
+
+    &__line {
+        
+        background-color: $white;
+
+        width: 25px;
+        height: 5px;
+        margin: 5px;
+                                                    
+        &_up {
+            transition: transform 0.3s ease-in-out 0s;
+        }
+
+        &_mid {
+            transition: transform 0.2s ease-in-out 0s, opacity 0.2s ease-in-out 0s;
+        }
+
+        &_down {
+            transition: transform 0.3s ease-in-out 0s;
+        }
+
+    }
+
+    &__color {                              // отдельный div для transition: color из-за конкуренции с transition: transform into cross
+        background-color: $white;
+        
+        width: 100%;
+        height: 100%;
+    }
+
+}
+
+.burger.cross-transform .burger__line {         // transforms the burger into the cross and back via JS
+    &_up {
+        transform: translateY(10px) rotate(45deg) ;
+    }
+    &_mid {
+        transform: translateX(-25px);
+        opacity: 0;
+    } 
+    &_down {
+        transform: translateY(-10px) rotate(-45deg) ;
+    }
+}
+//        <!-- L O G O ___ B U R G E R -->      //
+
+//        <!-- S I D E N A V M E N U -->      //
+.nav-container {
+    background-color: $yellow;
+    font-family: 'Passion One', sans-serif;
+
+    position: absolute;                  // добавляет ~ "height: 100vh;"
+    width: 0%;
+    height: 100%;
+    min-height: $minHeight;
+    
+    top: 0;
+    right: 0;
+    margin: 0;
+    z-index: 4;
+
+    overflow: hidden;
+
+    transition: 0.5s ease-in-out;
+}
+
+.navigation {
+    // background-color: $gray;
+    
+    width: 100%;
+    height: 80%;
+    margin: 0;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    list-style: none;
+    padding-inline-start: 0;
+
+    &__link {
+        // background-color: $gray;
+        text-decoration: none;
+
+        width: 100%;                   
+        height: 8vw;
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            height: 12vw;
+        }
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+
+        margin-top: 1vw;
+        overflow: hidden;
+
+    }
+
+}
+
+.outer {
+
+    transition: 0.2s ease-in-out;
+    &:first-child {
+        margin-left: 2em;
+    }
+    &:last-child {
+        margin-right: 2em;
+    }
+}
+
+.letter {
+    color: $black;
+    font-size: 10vw;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        font-size: 15vw;
+    }
+
+    font-weight: 900;
+    line-height: 0.9;
+
+    display: inline-block;              // чтобы работал transform
+    
+    transform: translateY(80%);
+
+    transition: 0.25s ease-in-out;
+}
+
+.letter:before {
+    content: attr(data-letter);
+    color: $white;
+    
+    position: absolute;
+    top: 80%;
+}
+
+.reveal {
+    transform: translateY(80%);
+    transition-timing-function: ease-in-out;
+}
+
+//        F O L L O W _ U S        //
+
+.socials-sidebar {
+    // background-color: $gray;
+
+    width: 100%;
+    height: 20%;
+    margin: 0;
+
+    padding-inline-start: 0;
+    list-style: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__item {          // .socials-sidebar__item is used for opacity animation when sidebar opens
+        opacity: 0;
+    }
+
+    &__link {
+        color: $black;
+        border: 1px solid $black;
+        border-radius: 50%;
+
+        @include adaptiv-prop(font-size, 16, 12);
+        @include adaptiv-prop(margin, 10, 5);
+
+        display: inline-block;
+
+        @include adaptiv-prop(width, 50, 40);
+        @include adaptiv-prop(height, 50, 40);
+        @include adaptiv-prop(line-height, 50, 40);
+        text-align: center;
+        vertical-align: middle;
+        text-decoration: none;
+
+        transition: color 0.25s, border 0.25s;
+
+        &:hover {
+            color: $white;
+            border: 1px solid $white;
+        }
+    }
+    
+}
+// <!-- / ___ S I D E N A V M E N U ___ / --> //
+
+
+.menu-container {
+    // width: 100%;                        // = 1262px;          
+    width: 90%;
+    margin: 130px auto;             // so logo-button and burger are in the middle of header 
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.project-categories {
+    width: 100%;
+    margin: 0 auto;
+
+    @include adaptiv-prop(font-size, 14, 12);
+
+    display: flex;
+    overflow: hidden;
+
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        display: none;
+    }
+
+    &__title {
+        font-weight: 900;
+
+        display: inline-block;
+        margin: 20px 0;
+    }
+
+    &__list {
+        padding-inline-start: 0;
+        list-style: none;
+
+        margin: 20px 0;
+
+        display: flex;
+        justify-content: center;
+    }
+
+    &__link {
+        color: $white;
+        text-decoration: none;
+        outline: none;
+
+        display: inline-block;
+        padding: 0 10px 0 10px;
+
+        transition: color 0.25s;
+
+        &:hover {
+            color: $gray;
+        }
+        &:focus {
+            color: $gray;
+        }
+    }
+
+}
+
+.project-categories__item + .project-categories__item {
+    border-left: 1px solid $white;
+} 
+
+.project-grid {
+    width: 100%;
+    margin: 0 auto;
+
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.card-project {
+
+    @media screen and (min-width: 1024px) {
+        width: 25%;
+        height: auto;
+    }
+    @media screen and (min-width: 767px) and (max-width: 1024px) {
+        width: 33.333%;
+        height: auto;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 100%;
+        height: auto;
+    }
+
+    position: relative;
+    overflow: hidden;
+
+    &__link {
+        text-decoration: none;
+        color: $white;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__img-wrapper {
+        width: 100%;
+        height: 100%;
+
+        // overflow: hidden;
+
+    }
+
+    &__img {
+        max-width: 100%;
+        height: auto;
+
+        display: block;                                 // делает изображение по размеру его контейнера
+        transform: scale(1);
+        transition: transform 0.8s ease;              // scaling the image up while mouseenter on the card
+
+    }
+
+    &__caption {
+        background-color: rgb(29, 29, 29, 0.5);     // $black + opacity: 0.5
+
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        transform: translateY(-100%);
+
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            position: relative;
+            height: auto;
+            opacity: 1;
+            background-color: $bg;
+        }
+
+        z-index: 3;
+        
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        @include adaptiv-prop(padding, 20, 10);
+        
+
+        opacity: 0;
+        transition: opacity 0.5s ease;
+
+        &:hover {
+            opacity: 1;
+        }
+
+    }
+
+    &__text {
+        max-width: 100%;
+
+        &_main {
+            @include adaptiv-prop(font-size, 18, 14);
+            font-weight: 900;
+
+            transition-delay: 0.1s;
+        }
+
+        &_sub {
+            @include adaptiv-prop(font-size, 16, 12);
+
+            transition-delay: 0.2s;
+        }
+
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            transform: translateY(0%);
+            opacity: 1;
+        }
+
+        // animation
+        transform: translateY(100%);
+        opacity: 0;
+
+        transition-property: transform, opacity;
+        transition-duration: 0.8s;
+        transition-timing-function: cubic-bezier(0.15,1,0.75,1);
+
+    }
+}

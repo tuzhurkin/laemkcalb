@@ -1,0 +1,801 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Passion+One:wght@900&display=swap');
+
+$bg: #282828;
+$black: #1d1d1d;
+$white: #fcfcfc;
+$gray: #949494;;
+$yellow: #ffbe33;
+
+$minWidth: 320px;
+$minHeight: 568px;
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    background-color: $bg;
+}
+
+a {
+    text-decoration: none;
+}
+
+// sets direction of title bubbling animation: fromCenter - fromRight - fromLeft
+@mixin bubbleDirection($direction, $title-length, $delay-start: 0.1s, $delay-step: 0.05s) {    
+
+    @if $direction == center {
+
+        // if $title-length is odd
+        @if ($title-length / 2) != ceil($title-length / 2) {
+
+            $middle: ceil($title-length / 2);
+            
+            @for $i from 0 to $middle {
+                .title-letter:nth-child(#{$middle + $i}) {
+                    animation-delay: $delay-start + $delay-step * $i;
+                }
+                .title-letter:nth-child(#{$middle - $i}) {
+                    animation-delay: $delay-start + $delay-step * $i;
+                }
+            } 
+        }
+
+        // if $title-length is even
+        @else if ($title-length / 2) == ceil($title-length / 2) {
+
+            $middle: $title-length / 2;
+            
+            @for $i from 0 to $middle {
+                .title-letter:nth-child(#{$middle - $i}) {
+                    animation-delay: $delay-start + $delay-step * $i;
+                }
+            } 
+            @for $i from $middle to $title-length {
+                .title-letter:nth-child(#{$i + 1}) {
+                    animation-delay: $delay-start + $delay-step * ($i - $middle);
+                }
+            }   
+        }
+    }
+    @else if $direction == left {
+        @for $i from 0 to $title-length {
+            .title-letter:nth-child(#{$i + 1}) {
+                animation-delay: $delay-start + $delay-step * $i;
+            }
+        } 
+    }
+    @else if $direction == right {
+        @for $i from 0 to $title-length {
+            .title-letter:nth-child(#{$title-length - $i}) {
+                animation-delay: $delay-start + $delay-step * $i;
+            }
+        }
+    }
+    @else {
+        @error "Unknown direction #{$direction}.";
+    }
+}
+// title bubbling animation itself
+@keyframes bubble {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+// mixin для адаптивного изменения шрифтов и отступов
+$maxWidth: 1280;
+@mixin adaptiv-prop($property, $pcSize, $mobSize) {
+    $addSize: $pcSize - $mobSize;
+    $addMobSize: $addSize + $addSize * 0.7;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addMobSize} * ((100vw - 320px) / #{$maxWidth}) );
+    }
+    @media screen and (min-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addSize} * (100vw / #{$maxWidth}) );
+    }
+}
+
+//        <!-- L O G O + B U R G E R -->      //
+.logo-button {
+    position: absolute;
+    top: 40px;
+    left: 5%;
+
+    width: 50px;
+    height: 50px;
+    z-index: 5;
+}
+
+.burger {
+    position: absolute;
+    top: 47.5px;
+    right: 5%;
+
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 5;
+
+    &__line {
+        
+        background-color: $white;
+
+        width: 25px;
+        height: 5px;
+        margin: 5px;
+                                                    
+        &_up {
+            transition: transform 0.3s ease-in-out 0s;
+        }
+
+        &_mid {
+            transition: transform 0.2s ease-in-out 0s, opacity 0.2s ease-in-out 0s;
+        }
+
+        &_down {
+            transition: transform 0.3s ease-in-out 0s;
+        }
+
+    }
+
+    &__color {                              // отдельный div для transition: color из-за конкуренции с transition: transform into cross
+        background-color: $white;
+        
+        width: 100%;
+        height: 100%;
+    }
+
+}
+
+.burger.cross-transform .burger__line {         // transforms the burger into the cross and back via JS
+    &_up {
+        transform: translateY(10px) rotate(45deg) ;
+    }
+    &_mid {
+        transform: translateX(-25px);
+        opacity: 0;
+    } 
+    &_down {
+        transform: translateY(-10px) rotate(-45deg) ;
+    }
+}
+//        <!-- L O G O ___ B U R G E R -->      //
+
+//        <!-- S I D E N A V M E N U -->      //
+.nav-container {
+    background-color: $yellow;
+    font-family: 'Passion One', sans-serif;
+
+    position: absolute;                  // добавляет ~ "height: 100vh;"
+    width: 0%;
+    height: 100%;
+    min-height: $minHeight;
+    
+    top: 0;
+    right: 0;
+    margin: 0;
+    z-index: 4;
+
+    overflow: hidden;
+
+    transition: 0.5s ease-in-out;
+}
+
+.navigation {
+    // background-color: $gray;
+    
+    width: 100%;
+    height: 80%;
+    margin: 0;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    list-style: none;
+    padding-inline-start: 0;
+
+    &__link {
+        // background-color: $gray;
+        text-decoration: none;
+
+        width: 100%;                   
+        height: 8vw;
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            height: 12vw;
+        }
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+
+        margin-top: 1vw;
+        overflow: hidden;
+
+    }
+
+}
+
+.outer {
+
+    transition: 0.2s ease-in-out;
+    &:first-child {
+        margin-left: 2em;
+    }
+    &:last-child {
+        margin-right: 2em;
+    }
+}
+
+.letter {
+    color: $black;
+    font-size: 10vw;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        font-size: 15vw;
+    }
+
+    font-weight: 900;
+    line-height: 0.9;
+
+    display: inline-block;              // чтобы работал transform
+    
+    transform: translateY(80%);
+
+    transition: 0.25s ease-in-out;
+}
+
+.letter:before {
+    content: attr(data-letter);
+    color: $white;
+    
+    position: absolute;
+    top: 80%;
+}
+
+.reveal {
+    transform: translateY(80%);
+    transition-timing-function: ease-in-out;
+}
+
+//        F O L L O W _ U S        //
+
+.socials-sidebar {
+    // background-color: $gray;
+
+    width: 100%;
+    height: 20%;
+    margin: 0;
+
+    padding-inline-start: 0;
+    list-style: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__item {          // .socials-sidebar__item is used for opacity animation when sidebar opens
+        opacity: 0;
+    }
+
+    &__link {
+        color: $black;
+        border: 1px solid $black;
+        border-radius: 50%;
+
+        @include adaptiv-prop(font-size, 16, 12);
+        @include adaptiv-prop(margin, 10, 5);
+
+        display: inline-block;
+
+        @include adaptiv-prop(width, 50, 40);
+        @include adaptiv-prop(height, 50, 40);
+        @include adaptiv-prop(line-height, 50, 40);
+        text-align: center;
+        vertical-align: middle;
+        text-decoration: none;
+
+        transition: color 0.25s, border 0.25s;
+
+        &:hover {
+            color: $white;
+            border: 1px solid $white;
+        }
+    }
+    
+}
+// <!-- / ___ S I D E N A V M E N U ___ / --> //
+
+
+.title-container {      
+
+    width: 100%;
+    min-height: 90vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__main {
+        // background-color: $yellow;
+        color: $white;
+        @include adaptiv-prop(font-size, 128, 64);
+        font-weight: 900;
+
+        width: 100%;
+        @include adaptiv-prop(height, 164, 100);
+        margin: 4% auto;
+    
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    
+        overflow: hidden;
+
+        @include bubbleDirection(center, 7, 0.1s, 0.1s);        // length of "say hi!" = 7
+    }
+
+    &__sub {
+        color: $white;
+        @include adaptiv-prop(font-size, 30, 14);
+        font-weight: 900;
+        text-align: center;
+
+        width: 90%;
+        margin: 0 auto;
+
+        // animation
+        transform: translateY(100%);
+        opacity: 0;
+
+        animation-name: disclosure;
+        animation-delay: 0.5s;
+        animation-duration: 1s;
+        animation-timing-function: cubic-bezier(0.15,1,0.75,1);
+        animation-fill-mode: forwards;
+
+    }
+}
+
+// animation for subtitle and form reveal
+@keyframes disclosure {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.title-letter {
+    display: inline-block;
+
+    margin: -1.4vw 0;           // отрицательный margin убирает расстояние спанов в блоке заголовка
+
+    transform: translateY(100%);
+
+    animation-name: bubble;
+    animation-duration: 1.5s;
+    animation-timing-function: cubic-bezier(0.15,1,0.3,1);
+    animation-fill-mode: forwards;
+}
+
+.form {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.registration-form {
+    background-color: $white;
+    color: $black;
+    @include adaptiv-prop(font-size, 22, 17);
+    letter-spacing: -1px;
+
+    width: 90%;
+    // position: relative;
+
+    // animation
+    transform: translateY(100%);
+    opacity: 0;
+
+    animation-name: disclosure;
+    animation-delay: 0.5s;
+    animation-duration: 1s;
+    animation-timing-function: cubic-bezier(0.15,1,0.75,1);
+    animation-fill-mode: forwards;
+    
+}
+
+.form-info {
+    margin: 5%;
+
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        flex-direction: column;    
+    }
+}
+
+.form-field {
+    // background-color: $gray;
+
+    width: 45%;
+    height: 45px;
+    position: relative;
+    margin: 35px 0;
+
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 90%;        
+        margin: 35px auto;
+    }
+
+    display: flex;
+    justify-content: flex-start;
+
+    &__input {
+        background-color: $white;
+        font-family: inherit;
+        @include adaptiv-prop(font-size, 20, 16);
+        letter-spacing: -0.5px;
+
+        width: 90%;
+        height: 100%;
+        padding-top: 20px;
+        padding-left: 0;
+        border: none;
+        outline: none;
+        
+        border-bottom: 1px solid $black;
+    }
+
+    &__label {
+        background-color: $white;
+
+        position: absolute;
+        width: 90%;
+        height: 100%;
+        left: 0%;
+        bottom: 0%;
+
+        pointer-events: none;
+        margin-bottom: 1px;
+
+        transition: all 0.5s ease;
+    }
+
+    &__name {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+    }
+
+    &__input:focus + &__label {
+        transform: translateY(-80%);
+    }
+
+    &__input:not(:placeholder-shown) + &__label {
+        transform: translateY(-80%);
+        color: $gray;
+    }
+    
+}
+
+.form-info-add {
+    margin: 5%;
+    position: relative;
+}
+
+.form-message {
+    width: 100%;
+    height: auto;                   // to exceed when text is filling textarea
+    position: relative;
+
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 90%;        
+        margin: 35px auto;
+    }
+
+    display: flex;
+    justify-content: center;
+
+    &__input {
+        background-color: $white;
+        font-family: inherit;
+        @include adaptiv-prop(font-size, 20, 16);
+        letter-spacing: -0.5px;
+
+        width: 100%;
+        height: auto;
+        padding-top: 20px;
+        padding-left: 0;
+        border: none;
+        outline: none;
+    }
+
+    &__label {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0%;
+        bottom: 0%;
+
+        pointer-events: none;
+        border-bottom: 1px solid $black;
+    }
+
+    &__name {
+        position: absolute;
+        left: 0px;
+        transition: all 0.5s ease;
+    }
+
+    &__input:focus + &__label &__name {
+        transform: translateY(-120%);
+    }
+
+    &__input:valid + &__label &__name {
+        transform: translateY(-120%);
+        color: $gray;
+    }
+    
+}
+
+.form-submit {
+    &__button {
+        background-color: $yellow;
+        border: none;
+        outline: none;
+
+        width: 100px;
+        height: 40px;
+
+        position: absolute;
+        right: 0%;
+        bottom: -20px;
+
+        cursor: pointer;
+
+        transform: rotateZ(-10deg);
+        transition: transform 0.5s ease;
+
+        &:hover {
+            transform: rotateZ(0deg);
+            transform: scale(1.2);
+        }
+
+    }
+
+    &__text {
+        color: $black;
+        font-size: 1em;
+        font-weight: 900;
+        letter-spacing: -1px;
+        text-transform: uppercase;
+
+    }
+}
+
+.form-footer {
+    margin: 5%;
+    
+    display: flex;
+    justify-content: center;
+    
+
+    &__text {
+        color: $black;
+        @include adaptiv-prop(font-size, 12, 10);
+
+        width: 100%;
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            width: 90%;
+            margin: 5% auto;
+        }
+    }
+}
+
+////////////////////// FOOTER ///////////////////////
+
+// mixin для адаптивного изменения шрифтов и отступов в футере
+$maxWidth: 1280;
+@mixin adaptiv-footer($property, $pcSize, $mobSize) {
+    $addSize: $pcSize - $mobSize;
+    $addMobSize: $addSize + $addSize * 0.7;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addMobSize} * ((100vw - 320px) / #{$maxWidth}) );
+    }
+    @media screen and (min-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addSize} * (100vw / #{$maxWidth}) );
+    }
+}
+
+.footer {
+    background-color: $black;
+    color: $white;
+    font-weight: 300;
+    @include adaptiv-footer(font-size, 20, 14);
+
+    width: 100%;
+    margin: 5% auto;
+    margin-bottom: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__title {
+        @include adaptiv-footer(font-size, 64, 36);
+        font-weight: 900;
+        letter-spacing: -1px;
+    }
+
+}
+
+.contact {
+    width: 100%;
+    margin: 5% auto;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (max-width: 767px) {
+        flex-direction: column;
+    }
+
+}   
+
+.office {
+    width: 30%;
+
+    @media screen and (max-width: 1024px) {
+        width: 40%;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 80%;
+    }
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__city {
+        font-weight: 900;
+        margin: 5px auto;
+    }
+
+    &__info {
+        margin: 5px auto;
+    }
+}
+
+.office + .office {
+    @media screen and (min-width: 767px) {
+        border-left: 1px solid $white;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        @include adaptiv-footer(margin-top, 75, 25);
+    }
+}
+
+.office:last-child {
+    @media screen and (min-width: 767px) and (max-width: 1024px) {
+        border: none;
+        margin-top: 50px;
+    }
+}
+
+.address {
+    color: $white;
+    text-decoration: none;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.mail-jobs {
+    width: 100%;
+    margin: 5% auto;                    
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (max-width: 767px) {
+        flex-direction: column;
+    }
+    
+}
+
+.slot {
+    width: 25%;
+    margin: 0 5%;
+
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 80%;
+    }
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__title {
+        font-weight: 900;
+        margin: 5px auto;
+    }
+    &__info {
+        color: $white;
+        margin: 5px auto;
+    }
+}
+
+.slot + .slot {
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        @include adaptiv-footer(margin-top, 50, 25);
+    }
+}
+
+.socials {
+    width: 100%;
+
+    padding-inline-start: 0;
+    list-style: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__link {
+        color: $white;
+        border: 1px solid $white;
+        border-radius: 50%;
+        @include adaptiv-footer(font-size, 16, 12);
+        @include adaptiv-footer(margin, 10, 5);
+
+        display: inline-block;
+        @include adaptiv-footer(width, 50, 40);
+        @include adaptiv-footer(height, 50, 40);
+        @include adaptiv-footer(line-height, 50, 40);
+        text-align: center;
+        vertical-align: middle;
+        text-decoration: none;
+    }
+}
+
+.copyright {
+    display: flex;
+    justify-content: space-between;
+
+    border-top: 1px solid $white;
+    padding: 10px 0;
+    width: 90%;
+    margin-top: 5%;
+
+    &__info {
+        color: $white;
+        font-size: 0.7em;
+    }
+}

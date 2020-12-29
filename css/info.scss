@@ -1,0 +1,651 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Passion+One:wght@900&display=swap');
+
+$bg: #282828;
+$black: #1d1d1d;
+$white: #fcfcfc;
+$gray: #949494;;
+$yellow: #ffbe33;
+
+$minWidth: 320px;
+$minHeight: 568px;
+
+// mixin для адаптивного изменения шрифтов и отступов
+$maxWidth: 1280;
+@mixin adaptiv-prop($property, $pcSize, $mobSize) {
+    $addSize: $pcSize - $mobSize;
+    $addMobSize: $addSize + $addSize * 0.7;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addMobSize} * ((100vw - 320px) / #{$maxWidth}) );
+    }
+    @media screen and (min-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addSize} * (100vw / #{$maxWidth}) );
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    background-color: $bg;
+}
+
+a {
+    text-decoration: none;
+}
+
+//        <!-- L O G O + B U R G E R -->      //
+.logo-button {
+    position: absolute;
+    top: 40px;
+    left: 5%;
+
+    width: 50px;
+    height: 50px;
+    z-index: 5;
+}
+
+.burger {
+    position: absolute;
+    top: 47.5px;
+    right: 5%;
+
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 5;
+
+    &__line {
+        
+        background-color: $white;
+
+        width: 25px;
+        height: 5px;
+        margin: 5px;
+                                                    
+        &_up {
+            transition: transform 0.3s ease-in-out 0s;
+        }
+
+        &_mid {
+            transition: transform 0.2s ease-in-out 0s, opacity 0.2s ease-in-out 0s;
+        }
+
+        &_down {
+            transition: transform 0.3s ease-in-out 0s;
+        }
+
+    }
+
+    &__color {                              // отдельный div для transition: color из-за конкуренции с transition: transform into cross
+        background-color: $white;
+        
+        width: 100%;
+        height: 100%;
+    }
+
+}
+
+.burger.cross-transform .burger__line {         // transforms the burger into the cross and back via JS
+    &_up {
+        transform: translateY(10px) rotate(45deg) ;
+    }
+    &_mid {
+        transform: translateX(-25px);
+        opacity: 0;
+    } 
+    &_down {
+        transform: translateY(-10px) rotate(-45deg) ;
+    }
+}
+//        <!-- L O G O ___ B U R G E R -->      //
+
+//        <!-- S I D E N A V M E N U -->      //
+.nav-container {
+    background-color: $yellow;
+    font-family: 'Passion One', sans-serif;
+
+    position: absolute;                  // добавляет ~ "height: 100vh;"
+    width: 0%;
+    height: 100%;
+    min-height: $minHeight;
+    
+    top: 0;
+    right: 0;
+    margin: 0;
+    z-index: 4;
+
+    overflow: hidden;
+
+    transition: 0.5s ease-in-out;
+}
+
+.navigation {
+    // background-color: $gray;
+    
+    width: 100%;
+    height: 80%;
+    margin: 0;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    list-style: none;
+    padding-inline-start: 0;
+
+    &__link {
+        // background-color: $gray;
+        text-decoration: none;
+
+        width: 100%;                   
+        height: 8vw;
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            height: 12vw;
+        }
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+
+        margin-top: 1vw;
+        overflow: hidden;
+
+    }
+
+}
+
+.outer {
+
+    transition: 0.2s ease-in-out;
+    &:first-child {
+        margin-left: 2em;
+    }
+    &:last-child {
+        margin-right: 2em;
+    }
+}
+
+.letter {
+    color: $black;
+    font-size: 10vw;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        font-size: 15vw;
+    }
+
+    font-weight: 900;
+    line-height: 0.9;
+
+    display: inline-block;              // чтобы работал transform
+    
+    transform: translateY(80%);
+
+    transition: 0.25s ease-in-out;
+}
+
+.letter:before {
+    content: attr(data-letter);
+    color: $white;
+    
+    position: absolute;
+    top: 80%;
+}
+
+.reveal {
+    transform: translateY(80%);
+    transition-timing-function: ease-in-out;
+}
+
+//        F O L L O W _ U S        //
+
+.socials-sidebar {
+    // background-color: $gray;
+
+    width: 100%;
+    height: 20%;
+    margin: 0;
+
+    padding-inline-start: 0;
+    list-style: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__item {          // .socials-sidebar__item is used for opacity animation when sidebar opens
+        opacity: 0;
+    }
+
+    &__link {
+        color: $black;
+        border: 1px solid $black;
+        border-radius: 50%;
+
+        @include adaptiv-prop(font-size, 16, 12);
+        @include adaptiv-prop(margin, 10, 5);
+
+        display: inline-block;
+
+        @include adaptiv-prop(width, 50, 40);
+        @include adaptiv-prop(height, 50, 40);
+        @include adaptiv-prop(line-height, 50, 40);
+        text-align: center;
+        vertical-align: middle;
+        text-decoration: none;
+
+        transition: color 0.25s, border 0.25s;
+
+        &:hover {
+            color: $white;
+            border: 1px solid $white;
+        }
+    }
+    
+}
+// <!-- / ___ S I D E N A V M E N U ___ / --> //
+
+
+.header {
+    color: $white;
+
+    width: 100%;
+    min-height: 100vh;
+    // margin: 5% 0 10%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__cover-wrapper {
+        width: 100%;
+        margin: 3% auto;
+        padding: 3% 0;
+
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    &__cover {
+        transform-origin: 50% 100%;
+        transform: rotate(180deg);
+
+        animation-name: coverRotation;
+        animation-duration: 1s;
+        animation-timing-function: cubic-bezier(0.9,1,0.75,1);
+        animation-fill-mode: forwards;
+    }
+
+    &__main {
+        @include adaptiv-prop(font-size, 40, 24);
+        font-weight: 900;
+        letter-spacing: -1px;
+        text-align: center;
+
+        width: 65%;
+        margin: 3% auto;
+
+        @media screen and (min-width: 320px) and (max-width: 1024px) {
+            width: 80%;
+        }
+
+        // animation
+        transform: translateY(100%);
+        opacity: 0;
+
+        animation-name: disclosure;
+        animation-delay: 0.25s;
+        animation-duration: 1s;
+        animation-timing-function: cubic-bezier(0.15,1,0.75,1);
+        animation-fill-mode: forwards;
+    }
+
+    &__sub {
+        @include adaptiv-prop(font-size, 20, 14);
+        font-weight: 300;
+        text-align: center;
+
+        width: 50%;
+        margin: 3% auto;
+
+        @media screen and (min-width: 320px) and (max-width: 1024px) {
+            width: 80%;
+        }
+
+        // animation
+        transform: translateY(100%);
+        opacity: 0;
+        
+        animation-name: disclosure;
+        animation-delay: 0.5s;
+        animation-duration: 1s;
+        animation-timing-function: cubic-bezier(0.15,1,0.75,1);
+        animation-fill-mode: forwards;
+    }
+}
+
+// animation for icon reveal
+@keyframes coverRotation {
+    0% {
+        transform: rotate(180deg);
+    }
+    50% {
+        transform: rotate(-30deg);
+    }
+    70% {
+        transform: rotate(20deg);
+    }
+    90% {
+        transform: rotate(-10deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+// animation for title reveal
+@keyframes disclosure {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+// S W I P E R //
+
+.infos-slider {
+    width: 100%;
+    margin: 5% 0;
+
+    &__image {
+        text-align: center;
+    }
+    &__image img {
+        max-width: 100%;
+    }
+    &__caption {
+        color: $white;
+        margin: 10px 0;
+    
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    &__main {
+        font-weight: 900;
+        @include adaptiv-prop(font-size, 18, 14);
+    }
+    &__sub {
+        font-weight: 300;
+        @include adaptiv-prop(font-size, 16, 12);
+        opacity: 0.75;
+    }
+}
+
+.infos-slider__scrollbar-wrapper {
+    width: 21%;
+    height: 4px;
+    margin: 50px auto;
+}
+
+div.swiper-scrollbar {
+    background: $black;
+    height: 4px;
+}
+
+div.swiper-scrollbar-drag {
+    background: $white;
+    height: 4px;
+}
+// ____ S W I P E R ____ //
+
+.brands {
+    color: $white;
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__title {
+        @include adaptiv-prop(font-size, 48, 32);
+        font-weight: 900;
+        letter-spacing: -1px;
+        text-align: center;
+    }
+
+}
+
+.brands-gallery {
+    width: 90%;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        flex-direction: column;
+    }
+
+    &__item {
+        width: 20%;
+        height: auto;
+        margin: 2%;
+
+        @media screen and (min-width: 320px) and (max-width: 767px) {
+            width: 80%;
+            margin: 5% auto;
+        }
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__image {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+////////////////////// FOOTER ///////////////////////
+
+// mixin для адаптивного изменения шрифтов и отступов в футере
+$maxWidth: 1280;
+@mixin adaptiv-footer($property, $pcSize, $mobSize) {
+    $addSize: $pcSize - $mobSize;
+    $addMobSize: $addSize + $addSize * 0.7;
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addMobSize} * ((100vw - 320px) / #{$maxWidth}) );
+    }
+    @media screen and (min-width: 767px) {
+        #{$property}: calc( #{$mobSize + px} + #{$addSize} * (100vw / #{$maxWidth}) );
+    }
+}
+
+.footer {
+    background-color: $black;
+    color: $white;
+    font-weight: 300;
+    @include adaptiv-footer(font-size, 20, 14);
+
+    width: 100%;
+    margin: 5% auto;
+    margin-bottom: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__title {
+        @include adaptiv-footer(font-size, 64, 36);
+        font-weight: 900;
+        letter-spacing: -1px;
+    }
+
+}
+
+.contact {
+    width: 100%;
+    margin: 5% auto;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (max-width: 767px) {
+        flex-direction: column;
+    }
+
+}   
+
+.office {
+    width: 30%;
+
+    @media screen and (max-width: 1024px) {
+        width: 40%;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 80%;
+    }
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__city {
+        font-weight: 900;
+        margin: 5px auto;
+    }
+
+    &__info {
+        margin: 5px auto;
+    }
+}
+
+.office + .office {
+    @media screen and (min-width: 767px) {
+        border-left: 1px solid $white;
+    }
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        @include adaptiv-footer(margin-top, 75, 25);
+    }
+}
+
+.office:last-child {
+    @media screen and (min-width: 767px) and (max-width: 1024px) {
+        border: none;
+        margin-top: 50px;
+    }
+}
+
+.address {
+    color: $white;
+    text-decoration: none;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.mail-jobs {
+    width: 100%;
+    margin: 5% auto;                    
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (max-width: 767px) {
+        flex-direction: column;
+    }
+    
+}
+
+.slot {
+    width: 25%;
+    margin: 0 5%;
+
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        width: 80%;
+    }
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__title {
+        font-weight: 900;
+        margin: 5px auto;
+    }
+    &__info {
+        color: $white;
+        margin: 5px auto;
+    }
+}
+
+.slot + .slot {
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        @include adaptiv-footer(margin-top, 50, 25);
+    }
+}
+
+.socials {
+    width: 100%;
+
+    padding-inline-start: 0;
+    list-style: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__link {
+        color: $white;
+        border: 1px solid $white;
+        border-radius: 50%;
+        @include adaptiv-footer(font-size, 16, 12);
+        @include adaptiv-footer(margin, 10, 5);
+
+        display: inline-block;
+        @include adaptiv-footer(width, 50, 40);
+        @include adaptiv-footer(height, 50, 40);
+        @include adaptiv-footer(line-height, 50, 40);
+        text-align: center;
+        vertical-align: middle;
+        text-decoration: none;
+    }
+}
+
+.copyright {
+    display: flex;
+    justify-content: space-between;
+
+    border-top: 1px solid $white;
+    padding: 10px 0;
+    width: 90%;
+    margin-top: 5%;
+
+    &__info {
+        color: $white;
+        font-size: 0.7em;
+    }
+}

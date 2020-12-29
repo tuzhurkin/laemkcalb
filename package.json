@@ -1,0 +1,20 @@
+{
+  "name": "blackmeal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "scss-intro": "sass ./css/intro.scss ./dist/intro.css",
+    "scss-info": "sass ./css/info.scss ./dist/info.css",
+    "scss-contact": "sass ./css/contact.scss ./dist/contact.css",
+    "scss-menu": "sass ./css/menu.scss ./dist/menu.css",
+    "scss-project": "sass ./css/project.scss ./dist/project.css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sass": "^1.30.0",
+    "swiper": "^6.4.5"
+  }
+}
